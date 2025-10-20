@@ -40,6 +40,25 @@ async function run() {
     const database = client.db("usersdb");
 
     const usersCollections = database.collection("users");
+
+    app.get("/users", async (req, res) => {
+      try {
+        const cursor = await usersCollections.find({});
+
+        const users = await cursor.toArray();
+
+        const data = {
+          users,
+          message: "okey , successfully get all users",
+        };
+
+        return res.send({ data });
+      } catch (e) {
+        return res.send({
+          message : e.message
+        })
+      }
+    });
     app.post("/users", async (req, res) => {
       const newUser = req.body;
 
@@ -47,7 +66,7 @@ async function run() {
 
       console.log(newUser);
 
-      res.send(newUser)
+      res.send(newUser);
     });
   } catch {
   } finally {
