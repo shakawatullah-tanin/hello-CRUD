@@ -1,62 +1,65 @@
-const express = require("express")
+const express = require("express");
 
-const {MongoClient,ServerApiVersion}=require('mongodb');
-const app = express()
+const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const port = process.env.PORT || 5006
+const cors = require("cors");
 
+const app = express();
+
+app.use(cors());
+
+app.use(express.json());
+
+const port = process.env.PORT || 5006;
 
 // tanin
 // password fgWeVv1XfTHHy1Iv
 
-
-
-const uri = "mongodb+srv://tanin:fgWeVv1XfTHHy1Iv@cluster0.vivw2nj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri =
+  "mongodb+srv://tanin:fgWeVv1XfTHHy1Iv@cluster0.vivw2nj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
 
-
 async function run() {
+  try {
+    //make client connect
 
-    try{
+    await client.connect();
 
-        //make client connect 
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
 
-        await client.connect() 
+    const database = client.db("usersdb");
 
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    const usersCollections = database.collection("users");
+    app.post("/users", async (req, res) => {
+      const newUser = req.body;
 
-    }
-    catch{
+      const result = await usersCollections.insertOne(newUser);
 
-    }
+      console.log(newUser);
 
-    finally{
-        
-
-    }
-    
+      res.send(newUser)
+    });
+  } catch {
+  } finally {
+  }
 }
 
-run().catch(console.dir)
+run().catch(console.dir);
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
+  res.send("Hello Crud");
+});
 
-    res.send("Hello Crud")
-
-})
-
-
-app.listen(port,()=>{
-
-    console.log("simple Crud server running on:",port)
-})
-
-
+app.listen(port, () => {
+  console.log("simple Crud server running on:", port);
+});
