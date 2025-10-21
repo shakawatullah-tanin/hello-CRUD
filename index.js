@@ -68,11 +68,31 @@ async function run() {
 
       res.send(newUser);
     });
+
+    app.put("/users/:id",async(req,res)=>{
+
+      const id = req.params.id
+      
+        const user = req.body
+
+        const updateDocs = {
+          $set:{
+            name :user.name,
+            email : user.email
+          }
+        }
+
+      const filter = {_id :new ObjectId(id)} 
+
+      const update = await usersCollections.updateOne(filter,updateDocs)
+
+    })
        app.delete("/users/:id",async(req, res) => {
 
         const id = req.params.id;
 
         const  query = {_id :new ObjectId(id)}
+
 
         const result = await usersCollections.deleteOne(query)
 
