@@ -47,12 +47,12 @@ async function run() {
 
         const users = await cursor.toArray();
 
-        const data = {
-          users,
-          message: "okey , successfully get all users",
-        };
+        // const data = {
+        //   users,
+        //   message: "okey , successfully get all users",
+        // };
 
-        return res.send({ data });
+        return res.send(users);
       } catch (e) {
         return res.send({
           message: e.message,
@@ -80,6 +80,20 @@ async function run() {
 
         res.send(result)
     });
+
+    app.get("/users/:id",async(req,res)=>{
+
+      const id = req.params.id
+
+      const query = {_id: new ObjectId(id)}
+
+      const result = await usersCollections.findOne(query)
+
+      res.send(result)
+
+    })
+
+
 
  
   } catch {
